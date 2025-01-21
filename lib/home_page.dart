@@ -33,13 +33,13 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: SafeArea(
         child: Column(children: [
-          const Row(
+          Row(
             children: [
               Padding(
                 padding: EdgeInsets.all(12.0),
                 child: Text(
                   "Rugged",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
               Expanded(

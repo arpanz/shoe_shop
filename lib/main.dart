@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'home_page.dart';
+import 'package:shoe_shop/product_desc.dart';
+import 'package:shoe_shop/home_page.dart';
+import 'package:shoe_shop/global_var.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,14 +20,23 @@ class MyApp extends StatelessWidget {
         inputDecorationTheme: InputDecorationTheme(
           hintStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
+        appBarTheme: AppBarTheme(
+            titleTextStyle: TextStyle(
+          fontSize: 22,
+          color: Colors.black,
+        )),
+        useMaterial3: true,
         textTheme: TextTheme(
             titleMedium: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
             ),
+            titleLarge: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
             bodySmall: TextStyle(fontWeight: FontWeight.w500, fontSize: 15)),
       ),
-      home: HomePage(),
+      home: ProductDesc(
+        product: products[0],
+      ),
     );
   }
 }
