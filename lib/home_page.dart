@@ -25,6 +25,8 @@ class _HomePageState extends State<HomePage> {
           selectedItemColor: Colors.black,
           backgroundColor: Colors.grey.shade300,
           iconSize: 28,
+          selectedFontSize: 0,
+          unselectedFontSize: 0,
           currentIndex: currentPage,
           onTap: (value) {
             setState(() {
