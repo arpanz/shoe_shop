@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:shoe_shop/global_var.dart';
 
-class ProductDesc extends StatelessWidget {
+class ProductDesc extends StatefulWidget {
   final Map<String, Object> product;
   const ProductDesc({super.key, required this.product});
+
+  @override
+  State<ProductDesc> createState() => _ProductDescState();
+}
+
+class _ProductDescState extends State<ProductDesc> {
+  int selectedSize = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -13,13 +21,13 @@ class ProductDesc extends StatelessWidget {
       body: Column(
         children: [
           Text(
-            product['title'] as String,
+            widget.product['title'] as String,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           Spacer(),
           Padding(
             padding: const EdgeInsets.all(12.0),
-            child: Image.asset(product['image'] as String),
+            child: Image.asset(widget.product['image'] as String),
           ),
           Spacer(flex: 2),
           Container(
@@ -31,23 +39,33 @@ class ProductDesc extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("\$${product['price']}",
+                Text("\$${widget.product['price']}",
                     style: Theme.of(context).textTheme.titleLarge),
                 SizedBox(height: 8),
                 SizedBox(
                   height: 60,
                   child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: (product['size'] as List<int>).length,
+                      itemCount: (widget.product['size'] as List<int>).length,
                       itemBuilder: (context, index) {
-                        final size = (product['size'] as List<int>)[index];
+                        final size =
+                            (widget.product['size'] as List<int>)[index];
 
                         return Padding(
                           padding: const EdgeInsets.all(6.0),
-                          child: Chip(
-                            label: Text(
-                              size.toString(),
-                            ),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedSize = size;
+                              });
+                            },
+                            child: Chip(
+                                label: Text(
+                                  size.toString(),
+                                ),
+                                backgroundColor: selectedSize == size
+                                    ? Colors.grey.shade400
+                                    : null),
                           ),
                         );
                       }),
