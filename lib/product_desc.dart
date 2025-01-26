@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shoe_shop/global_var.dart';
+import 'package:provider/provider.dart';
+import 'package:shoe_shop/cart_provider.dart';
 
 class ProductDesc extends StatefulWidget {
   final Map<String, Object> product;
@@ -11,6 +12,30 @@ class ProductDesc extends StatefulWidget {
 
 class _ProductDescState extends State<ProductDesc> {
   int selectedSize = 0;
+
+  onTap() {
+    if (selectedSize != 0) {
+      Provider.of<CartProvider>(context, listen: false).addProduct({
+        'id': widget.product['id'],
+        'title': widget.product['title'],
+        'price': widget.product['price'],
+        'size': selectedSize,
+        'company': widget.product['company'],
+        'image': widget.product['image'],
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('product added to cart'),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please select a size'),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +98,7 @@ class _ProductDescState extends State<ProductDesc> {
                 Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: onTap,
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
                           minimumSize: Size(double.infinity, 50)),

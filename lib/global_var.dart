@@ -24,13 +24,3 @@ final products = [
     'image': 'assets/images/3.webp',
   },
 ];
-final cart = [
-  {
-    'id': 4,
-    'title': 'Jordan rodeo',
-    'price': 1400.00,
-    'size': [8, 9, 10, 11],
-    'company': 'Nike',
-    'image': 'assets/images/13.avif',
-  },
-];
