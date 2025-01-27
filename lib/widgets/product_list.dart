@@ -13,112 +13,147 @@ class ProductList extends StatefulWidget {
 class _ProductListState extends State<ProductList> {
   final List<String> filters = const ['All', 'Adidas', 'Nike', 'Puma'];
   late String selectedFilter;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+  final FocusNode _searchFocusNode = FocusNode();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     selectedFilter = filters[0];
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    setState(() {
+      _searchQuery = _searchController.text.toLowerCase();
+    });
+  }
+
+  List<Map<String, dynamic>> get filteredProducts {
+    return products.where((product) {
+      final brandMatch =
+          selectedFilter == 'All' || product['company'] == selectedFilter;
+      final searchMatch =
+          product['title'].toString().toLowerCase().contains(_searchQuery);
+      return brandMatch && searchMatch;
+    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     const border = OutlineInputBorder(
-      borderSide: BorderSide(
-        color: Colors.grey,
-      ),
-      borderRadius: BorderRadius.horizontal(
-        left: Radius.circular(40),
-      ),
+      borderSide: BorderSide(color: Colors.grey),
+      borderRadius: BorderRadius.horizontal(left: Radius.circular(40)),
     );
-    return SafeArea(
-      child: Column(children: [
-        Row(
-          children: [
-            Padding(
-              padding: EdgeInsets.all(12.0),
-              child: Text(
-                "Rugged",
-                style: Theme.of(context).textTheme.titleLarge,
+
+    return GestureDetector(
+      // Dismiss keyboard and remove cursor when tapping anywhere
+      onTap: () {
+        _searchFocusNode.unfocus();
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      behavior: HitTestBehavior.opaque, // Critical fix for proper tap handling
+      child: SafeArea(
+        child: Column(children: [
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Text("Rugged",
+                    style: Theme.of(context).textTheme.titleLarge),
               ),
-            ),
-            Expanded(
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: "Search",
-                  prefixIcon: Icon(Icons.search),
-                  border: border,
-                  enabledBorder: border,
-                  focusedBorder: border,
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  focusNode: _searchFocusNode,
+                  autofocus: false, // Prevent auto-focus on screen load
+                  decoration: InputDecoration(
+                    hintText: "Search",
+                    prefixIcon: const Icon(Icons.search),
+                    border: border,
+                    enabledBorder: border,
+                    focusedBorder: border,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: 120,
-          child: ListView.builder(
-              itemCount: filters.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                final filter = filters[index];
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              alignment: WrapAlignment.center,
+              children: filters.map((filter) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: GestureDetector(
-                    onTap: () {
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: ChoiceChip(
+                    label: Text(filter),
+                    selected: selectedFilter == filter,
+                    onSelected: (selected) {
                       setState(() {
-                        selectedFilter = filter;
+                        selectedFilter = selected ? filter : filters[0];
                       });
+                      _searchFocusNode.unfocus(); // Remove focus from search
                     },
-                    child: Chip(
-                      backgroundColor: selectedFilter == filter
-                          ? Colors.grey
-                          : Color.fromARGB(255, 230, 236, 239),
-                      side: const BorderSide(
-                        color: Colors.transparent,
-                      ),
-                      label: Text(
-                        filter,
-                        style: TextStyle(
-                          fontWeight: selectedFilter == filter
-                              ? FontWeight.w900
-                              : FontWeight.w800,
-                          fontSize: 17,
-                        ),
-                      ),
-                      padding: const EdgeInsets.all(14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
-                      ),
+                    labelStyle: TextStyle(
+                      fontWeight: selectedFilter == filter
+                          ? FontWeight.w900
+                          : FontWeight.w800,
+                      fontSize: 17,
+                    ),
+                    selectedColor: Colors.grey,
+                    backgroundColor: const Color.fromARGB(255, 230, 236, 239),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
                     ),
                   ),
                 );
-              }),
-        ),
-        Expanded(
-          child: ListView.builder(
-              itemCount: products.length,
-              itemBuilder: (context, index) {
-                final product = products[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return ProductDesc(product: product);
+              }).toList(),
+            ),
+          ),
+          Expanded(
+            child: filteredProducts.isEmpty
+                ? Center(
+                    child: Text(
+                      'No products found',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: filteredProducts.length,
+                    itemBuilder: (context, index) {
+                      final product = filteredProducts[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductDesc(
+                                  product: product as Map<String, Object>),
+                            ),
+                          );
+                          _searchFocusNode.unfocus(); // Remove search focus
                         },
-                      ),
-                    );
-                  },
-                  child: ProductCard(
-                    title: product['title'] as String,
-                    price: product['price'] as double,
-                    image: product['image'] as String,
-                  ),
-                );
-              }),
-        )
-      ]),
+                        child: ProductCard(
+                          title: product['title'] as String,
+                          price: product['price'] as double,
+                          image: product['image'] as String,
+                        ),
+                      );
+                    }),
+          )
+        ]),
+      ),
     );
   }
 }

@@ -52,7 +52,10 @@ class _ProductDescState extends State<ProductDesc> {
           Spacer(),
           Padding(
             padding: const EdgeInsets.all(12.0),
-            child: Image.asset(widget.product['image'] as String),
+            child: Image.asset(
+              widget.product['image'] as String,
+              height: 250,
+            ),
           ),
           Spacer(flex: 2),
           Container(
