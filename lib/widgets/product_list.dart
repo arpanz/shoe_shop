@@ -56,12 +56,11 @@ class _ProductListState extends State<ProductList> {
     );
 
     return GestureDetector(
-      // Dismiss keyboard and remove cursor when tapping anywhere
       onTap: () {
         _searchFocusNode.unfocus();
         FocusScope.of(context).requestFocus(FocusNode());
       },
-      behavior: HitTestBehavior.opaque, // Critical fix for proper tap handling
+      behavior: HitTestBehavior.opaque,
       child: SafeArea(
         child: Column(children: [
           Row(
