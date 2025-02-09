@@ -1,16 +1,26 @@
-# shoe_shop
+# Shoe Shop
 
-A new Flutter project.
+A Flutter-based shoe shop application that allows users to browse products, add them to a cart, and view the cart.
+
+## Features
+
+- Browse a list of shoes
+- View detailed information about each shoe
+- Add shoes to the cart
+- Remove shoes from the cart
+- View the cart with all added shoes
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites
 
-A few resources to get you started if this is your first Flutter project:
+- Flutter SDK: [Install Flutter](https://flutter.dev/docs/get-started/install)
+- Dart SDK: Included with Flutter
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Installation
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/arpanz/shoe_shop.git
+   cd shoe_shop
